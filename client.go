@@ -49,7 +49,7 @@ func (c *Client) doApiRequest(url string, result interface{}) (int, string, erro
 					return status, content, ErrInvalidResponse
 				}
 			}
-			//log.Printf("apiCall() result: %V", result)
+			log.Printf("apiCall() result: %V", result)
 			return status, content, nil
 		}
 
