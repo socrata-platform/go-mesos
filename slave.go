@@ -1,7 +1,6 @@
 package mesos
 
 import (
-    "fmt"
     "time"
 )
 
@@ -62,9 +61,8 @@ type SlaveStats struct {
 }
 
 
-func (s *Slave) LoadState(client *Client) (error) {
-    uri := "slave(1)/state.json"
-    url := fmt.Sprintf("%s//%s:%d/%s", client.config.getScheme(), s.HostName, client.config.SlavePort, uri)
+func (s *Slave) LoadState(client MesosClient) (error) {
+    url := client.slaveStateURL(s.HostName)
     _, _, err := client.doApiRequest(url, s)
     if err != nil {
         s.StateLoadError = true
@@ -74,10 +72,9 @@ func (s *Slave) LoadState(client *Client) (error) {
     return err
 }
 
-func (s *Slave) LoadStats(client *Client) (error) {
+func (s *Slave) LoadStats(client MesosClient) (error) {
     ss := &SlaveStats{}
-    uri := "slave(1)/stats.json"
-    url := fmt.Sprintf("%s//%s:%d/%s", client.config.getScheme(), s.HostName, client.config.SlavePort, uri)
+    url := client.slaveStatsURL(s.HostName)
     if _, _, err := client.doApiRequest(url, ss); err != nil {
         return err
     }

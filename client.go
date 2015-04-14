@@ -1,6 +1,7 @@
 package mesos
 
 import (
+    "fmt"
     "time"
 	"net/http"
     "errors"
@@ -21,6 +22,19 @@ type Client struct {
     config Config
 	logger *log.Logger
 	http *http.Client
+}
+
+type MesosClient interface {
+    setMasterURL(leader string)
+    masterURL() string
+    buildDiscoveryURL(uri string) string
+
+    slaveStateURL(hostname string) string
+    slaveStatsURL(hostname string) string
+
+    doApiRequest(url string, result interface{}) (int, string, error)
+    unMarshallDataToJson(stream io.Reader, result interface{}) error
+    doRequst(method, url string)(int, string, *http.Response, error)
 }
 
 
@@ -100,4 +114,33 @@ func (c *Client) doRequst(method, url string)(int, string, *http.Response, error
 		}
 	}
 	return 0, "", nil, errors.New("Unable to make call to marathon")
+}
+
+
+func (c *Client) buildDiscoveryURL(uri string) string {
+    return fmt.Sprintf("%s/%s", c.config.DiscoveryURL, uri)
+}
+
+
+func (c *Client) setMasterURL(leader string) {
+    c.config.MasterURL = fmt.Sprintf("%s//%s:%d", c.config.getScheme(), leader, c.config.MasterPort)
+}
+
+
+func (c *Client) masterURL() string {
+    return c.config.MasterURL
+}
+
+
+func (c *Client) slaveStateURL(hostname string) string {
+    return c.slaveURL(hostname, "slave(1)/state.json")
+}
+
+
+func (c *Client) slaveStatsURL(hostname string) string {
+    return c.slaveURL(hostname, "slave(1)/stats.json")
+}
+
+func (c *Client) slaveURL(hostname, uri string) string {
+    return fmt.Sprintf("%s//%s:%d/%s", c.config.getScheme(), hostname, c.config.SlavePort, uri)
 }

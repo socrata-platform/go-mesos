@@ -6,18 +6,18 @@ import (
 )
 
 
-func DiscoverCluster(client *Client) (*Cluster, error) {
+func DiscoverCluster(client MesosClient) (*Cluster, error) {
     uri := "master/state.json"
-    url := fmt.Sprintf("%s/%s", client.config.DiscoveryURL, uri)
+    url := client.buildDiscoveryURL(uri)
 
     cluster := &Cluster{}
     if _, _, err := client.doApiRequest(url, cluster); err != nil {
         return cluster, ErrClusterDiscoveryError
     }
-    client.config.MasterURL = fmt.Sprintf("%s//%s:%d", client.config.getScheme(), cluster.getLeader(), client.config.MasterPort)
+    client.setMasterURL(cluster.getLeader())
 
     if len(cluster.Frameworks) == 0 {
-        url := fmt.Sprintf("%s/%s", client.config.MasterURL, uri)
+        url := fmt.Sprintf("%s/%s", client.masterURL, uri)
         client.doApiRequest(url, cluster)
     }
 
@@ -40,7 +40,7 @@ func (c *Cluster) getLeader() (string) {
 }
 
 
-func (c *Cluster) LoadSlaveStates(client *Client) (error) {
+func (c *Cluster) LoadSlaveStates(client MesosClient) (error) {
     var erred bool
 
     for i := range c.Slaves {
@@ -53,7 +53,7 @@ func (c *Cluster) LoadSlaveStates(client *Client) (error) {
 }
 
 
-func (c *Cluster) LoadSlaveStats(client *Client) (error) {
+func (c *Cluster) LoadSlaveStats(client MesosClient) (error) {
     var erred bool
 
     for i := range c.Slaves {
