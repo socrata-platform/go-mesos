@@ -69,7 +69,6 @@ func (c *Cluster) LoadSlaveStats(client MesosClient) (error) {
 func (c *Cluster) GetFramework(framework string) (map[string]*Framework) {
     fs := make(map[string]*Framework)
     for _, f := range c.Frameworks {
-        fmt.Println(f.Name)
         if f.Name == framework {
             fs[f.Id] = f
         }
