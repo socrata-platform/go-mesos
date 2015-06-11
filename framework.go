@@ -15,6 +15,7 @@ type Framework struct {
     OfferedResources *Resource   `json:"offered_resources"`
     UsedResources    *Resource   `json:"used_resources"`
     Tasks            []*Task     `json:"tasks"`
+    CompletedTasks   []*Task     `json:"completed_tasks"`
     Executors        []*Executor `json:"executors"`
 }
 
@@ -36,8 +37,13 @@ type Task struct {
     Resources        *Resource `json:"resources"`
     SlaveId          string    `json:"slave_id"`
     State            string    `json:"state"`
+    Statuses         []*Status `json:"statuses"`
 }
 
+type Status struct {
+    State       string    `json:"state"`
+    Timestamp   float64   `json:"timestamp"`
+}
 
 type Resource struct {
     Cpus  float32    `json:"cpus"`
