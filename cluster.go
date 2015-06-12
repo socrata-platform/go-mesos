@@ -1,10 +1,9 @@
 package mesos
 
 import (
-    "regexp"
     "fmt"
+    "regexp"
 )
-
 
 func DiscoverCluster(client MesosClient) (*Cluster, error) {
     uri := "master/state.json"
@@ -14,7 +13,7 @@ func DiscoverCluster(client MesosClient) (*Cluster, error) {
     if _, _, err := client.doApiRequest(url, cluster); err != nil {
         return cluster, ErrClusterDiscoveryError
     }
-    client.setMasterURL(cluster.getLeader())
+    client.setMasterURL(cluster.GetLeader())
 
     if len(cluster.Frameworks) == 0 {
         url := fmt.Sprintf("%s/%s", client.masterURL(), uri)
@@ -24,7 +23,6 @@ func DiscoverCluster(client MesosClient) (*Cluster, error) {
     return cluster, nil
 }
 
-
 type Cluster struct {
     LeaderPID  string       `json:"leader"`
     Version    string       `json:"version"`
@@ -32,15 +30,13 @@ type Cluster struct {
     Slaves     []*Slave     `json:"slaves"`
 }
 
-
-func (c *Cluster) getLeader() (string) {
+func (c *Cluster) GetLeader() string {
     // String to extract IP from: master@10.110.37.146:5050
     re, _ := regexp.Compile(`[\d]+\.[\d]+\.[\d]+\.[\d]+`)
     return re.FindString(c.LeaderPID)
 }
 
-
-func (c *Cluster) LoadSlaveStates(client MesosClient) (error) {
+func (c *Cluster) LoadSlaveStates(client MesosClient) error {
     var erred bool
 
     for i := range c.Slaves {
@@ -48,12 +44,13 @@ func (c *Cluster) LoadSlaveStates(client MesosClient) (error) {
             erred = true
         }
     }
-    if erred { return ErrSlaveStateLoadError }
+    if erred {
+        return ErrSlaveStateLoadError
+    }
     return nil
 }
 
-
-func (c *Cluster) LoadSlaveStats(client MesosClient) (error) {
+func (c *Cluster) LoadSlaveStats(client MesosClient) error {
     var erred bool
 
     for i := range c.Slaves {
@@ -61,12 +58,13 @@ func (c *Cluster) LoadSlaveStats(client MesosClient) (error) {
             erred = true
         }
     }
-    if erred { return ErrSlaveStateLoadError }
+    if erred {
+        return ErrSlaveStateLoadError
+    }
     return nil
 }
 
-
-func (c *Cluster) GetFramework(framework string) (map[string]*Framework) {
+func (c *Cluster) GetFramework(framework string) map[string]*Framework {
     fs := make(map[string]*Framework)
     for _, f := range c.Frameworks {
         if f.Name == framework {
@@ -76,8 +74,7 @@ func (c *Cluster) GetFramework(framework string) (map[string]*Framework) {
     return fs
 }
 
-
-func (c *Cluster) GetSlaveById(slaveId string) (*Slave) {
+func (c *Cluster) GetSlaveById(slaveId string) *Slave {
     var slave *Slave
     for _, s := range c.Slaves {
         if s.Id == slaveId {
@@ -87,8 +84,7 @@ func (c *Cluster) GetSlaveById(slaveId string) (*Slave) {
     return slave
 }
 
-
-func (c *Cluster) GetSlaveByHostName(hostName string) (*Slave) {
+func (c *Cluster) GetSlaveByHostName(hostName string) *Slave {
     var slave *Slave
     for _, s := range c.Slaves {
         if s.HostName == hostName {
