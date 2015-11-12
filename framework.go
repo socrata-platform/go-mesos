@@ -53,8 +53,8 @@ type Resource struct {
 }
 
 
-func (e *Executor) RegisteredContainerName() (string) {
-    return fmt.Sprintf("mesos-%s", e.Container)
+func (e *Executor) RegisteredContainerName(t *Task) (string) {
+    return fmt.Sprintf("mesos-%s.%s", t.SlaveId, e.Container)
 }
 
 

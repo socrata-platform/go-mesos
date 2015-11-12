@@ -97,7 +97,6 @@ func (c *Client) doRequst(method, url string)(int, string, *http.Response, error
 		request.Header.Add("Content-Type", "application/json")
 		var content string
 		if response, err := client.Do(request); err != nil {
-            log.Println("HERE")
             log.Printf("Unable to make call to Mesos: %s", err)
             c.logger.Printf("Unable to make call to Mesos: %s", err)
             return 0, "", nil, errors.New("Unable to make call to Mesos")
