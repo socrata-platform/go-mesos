@@ -137,7 +137,7 @@ func (c *Client) slaveStateURL(hostname string) string {
 
 
 func (c *Client) slaveStatsURL(hostname string) string {
-    return c.slaveURL(hostname, "slave(1)/stats.json")
+    return c.slaveURL(hostname, "metrics/snapshot")
 }
 
 func (c *Client) slaveURL(hostname, uri string) string {

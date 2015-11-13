@@ -17,47 +17,52 @@ type Slave struct {
 }
 
 type SlaveStats struct {
-    FailedTasks              int32   `json:"failed_tasks"`
-    FinishedTasks            int32   `json:"finished_tasks"`
-    KilledTasks              int32   `json:"killed_tasks"`
-    LostTasks                int32   `json:"lost_tasks"`
-    CpusPercent              float64 `json:"slave/cpus_percent"`
-    CpusTotal                int32   `json:"slave/cpus_total"`
-    CpusUsed                 float64 `json:"slave/cpus_used"`
-    DiskPercent              float64 `json:"slave/disk_percent"`
-    DiskTotal                int32   `json:"slave/disk_total"`
-    DiskUsed                 int32   `json:"slave/disk_used"`
-    ExecutorsRegistering     int32   `json:"slave/executors_registering"`
-    ExecutorsRunning         int32   `json:"slave/executors_running"`
-    ExecutorsTerminated      int32   `json:"slave/executors_terminated"`
-    ExecutorsTerminating     int32   `json:"slave/executors_terminating"`
-    FrameworksActive         int32   `json:"slave/frameworks_active"`
-    InvalidFrameworkMessages int32   `json:"slave/invalid_framework_messages"`
-    InvalidStatusUpdates     int32   `json:"slave/invalid_status_updates"`
-    MemPercent               float64 `json:"slave/mem_percent"`
-    MemTotal                 int32   `json:"slave/mem_total"`
-    MemUsed                  int32   `json:"slave/mem_used"`
-    RecoveryErrors           int32   `json:"slave/recovery_errors"`
-    Registered               int32   `json:"slave/registered"`
-    TasksFailed              int32   `json:"slave/tasks_failed"`
-    TasksFinished            int32   `json:"slave/tasks_finished"`
-    TasksKilled              int32   `json:"slave/tasks_killed"`
-    TasksLost                int32   `json:"slave/tasks_lost"`
-    TasksRunning             int32   `json:"slave/tasks_running"`
-    TasksStaging             int32   `json:"slave/tasks_staging"`
-    TasksStarting            int32   `json:"slave/tasks_starting"`
-    UptimeSecs               float64 `json:"slave/uptime_secs"`
-    ValidFrameworkMessages   int32   `json:"slave/valid_framework_messages"`
-    ValidStatusUpdates       int32   `json:"slave/valid_status_updates"`
-    StagedTasks              int32   `json:"staged_tasks"`
-    StartedTasks             int32   `json:"started_tasks"`
-    Load1Min                 float64 `json:"system/load_1min"`
-    Load5Min                 float64 `json:"system/load_5min"`
-    Load15Min                float64 `json:"system/load_15min"`
-    MemFreeBytes             int64   `json:"system/mem_free_bytes"`
-    MemTotalBytes            int64   `json:"system/mem_total_bytes"`
-    TotalFrameworks          int32   `json:"total_frameworks"`
-    Uptime                   float64 `json:"uptime"`
+	ContainerDestroyErrors		float64	`json:"containerizer/mesos/container_destroy_errors"`
+	ContainerLaunchErrors		float64	`json:"slave/container_launch_errors"`
+	CpusPercent			float64	`json:"slave/cpus_percent"`
+	CpusRevocablePercent		float64	`json:"slave/cpus_revocable_percent"`
+	CpusRevocableTotal		float64	`json:"slave/cpus_revocable_total"`
+	CpusRevocableUsed		float64	`json:"slave/cpus_revocable_used"`
+	CpusTotal			float64	`json:"slave/cpus_total"`
+	CpusUsed			float64	`json:"slave/cpus_used"`
+	DiskPercent			float64	`json:"slave/disk_percent"`
+	DiskRevocablePercent		float64	`json:"slave/disk_revocable_percent"`
+	DiskRevocableTotal		float64	`json:"slave/disk_revocable_total"`
+	DiskRevocableUsed		float64	`json:"slave/disk_revocable_used"`
+	DiskTotal			float64	`json:"slave/disk_total"`
+	DiskUsed			float64	`json:"slave/disk_used"`
+	ExecDirMaxAge			float64	`json:"slave/executor_directory_max_allowed_age_secs"`
+	ExecutorsPreempted		float64	`json:"slave/executors_preempted"`
+	ExecutorsRegistering		float64	`json:"slave/executors_registering"`
+	ExecutorsRunning		float64	`json:"slave/executors_running"`
+	ExecutorsTerminated		float64	`json:"slave/executors_terminated"`
+	ExecutorsTerminating		float64	`json:"slave/executors_terminating"`
+	FrameworksActive		float64	`json:"slave/frameworks_active"`
+	InvalidFrameworkMessages	float64	`json:"slave/invalid_framework_messages"`
+	InvalidStatusUpdates		float64	`json:"slave/invalid_status_updates"`
+	MemPercent			float64	`json:"slave/mem_percent"`
+	MemRevocablePercent		float64	`json:"slave/mem_revocable_percent"`
+	MemRevocableTotal		float64	`json:"slave/mem_revocable_total"`
+	MemRevocableUsed		float64	`json:"slave/mem_revocable_used"`
+	MemTotal			float64	`json:"slave/mem_total"`
+	MemUsed				float64	`json:"slave/mem_used"`
+	RecoveryErrors			float64	`json:"slave/recovery_errors"`
+	Registered			float64	`json:"slave/registered"`
+	TasksFailed			float64	`json:"slave/tasks_failed"`
+	TasksFinished			float64	`json:"slave/tasks_finished"`
+	TasksKilled			float64	`json:"slave/tasks_killed"`
+	TasksLost			float64	`json:"slave/tasks_lost"`
+	TasksRunning			float64	`json:"slave/tasks_running"`
+	TasksStaging			float64	`json:"slave/tasks_staging"`
+	TasksStarting			float64	`json:"slave/tasks_starting"`
+	UptimeSecs			float64	`json:"slave/uptime_secs"`
+	ValidFrameworkMessages		float64	`json:"slave/valid_framework_messages"`
+	ValidStatusUpdates		float64	`json:"slave/valid_status_updates"`
+	Load1Min			float64	`json:"system/load_1min"`
+	Load5Min			float64	`json:"system/load_5min"`
+	Load15Min			float64	`json:"system/load_15min"`
+	MemFreeBytes			float64	`json:"system/mem_free_bytes"`
+	MemTotalBytes			float64	`json:"system/mem_total_bytes"`
 }
 
 
@@ -73,7 +78,7 @@ func (s *Slave) LoadState(client MesosClient) (error) {
 }
 
 func (s *Slave) LoadStats(client MesosClient) (error) {
-    ss := &SlaveStats{}
+    ss := new(SlaveStats)
     url := client.slaveStatsURL(s.HostName)
     if _, _, err := client.doApiRequest(url, ss); err != nil {
         return err
