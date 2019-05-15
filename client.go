@@ -132,7 +132,7 @@ func (c *Client) masterURL() string {
 
 
 func (c *Client) slaveStateURL(hostname string) string {
-    return c.slaveURL(hostname, "slave(1)/state.json")
+    return c.slaveURL(hostname, "slave(1)/state")
 }
 
 

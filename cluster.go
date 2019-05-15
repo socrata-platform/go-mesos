@@ -6,7 +6,7 @@ import (
 )
 
 func DiscoverCluster(client MesosClient) (*Cluster, error) {
-    uri := "master/state.json"
+    uri := "master/state"
     url := client.buildDiscoveryURL(uri)
 
     cluster := &Cluster{}
